@@ -1,0 +1,190 @@
+cat > index.html << 'EOF'
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Brownie från himlen</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    overflow:hidden;
+    font-family:"Comic Sans MS","Trebuchet MS",sans-serif;
+    background:linear-gradient(#4fb3ee 0%,#a6dcff 60%,#eaf8ff 100%);
+  }
+
+  /* Moln */
+  .cloud{position:absolute;background:#fff;border-radius:100px;opacity:.92;animation:drift linear infinite}
+  .cloud::before,.cloud::after{content:"";position:absolute;background:#fff;border-radius:50%}
+  .cloud::before{width:50%;height:160%;left:15%;top:-70%}
+  .cloud::after{width:35%;height:120%;right:15%;top:-45%}
+  .c1{width:180px;height:50px;top:14%;left:-220px;animation-duration:50s}
+  .c2{width:240px;height:60px;top:30%;left:-280px;animation-duration:70s;animation-delay:-30s}
+  .c3{width:140px;height:40px;top:7%;left:-180px;animation-duration:60s;animation-delay:-12s}
+  @keyframes drift{to{transform:translateX(calc(100vw + 400px))}}
+
+  /* Rubrik */
+  h1{
+    position:absolute;top:6%;width:100%;text-align:center;
+    font-size:clamp(1.6rem,5vw,3.4rem);color:#3a1a0b;
+    text-shadow:2px 2px 0 #fff;
+    opacity:0;animation:fadeUp .8s 2.6s ease-out both;
+  }
+  @keyframes fadeUp{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:none}}
+
+  /* Tallrik + brownie */
+  .plate-wrap{position:absolute;left:50%;bottom:6vh;width:min(640px,94vw);transform:translateX(-50%)}
+  .plate-wrap > svg{width:100%;display:block}
+
+  .puddle{transform-box:fill-box;transform-origin:center;animation:puddle .5s 1.7s ease-out both}
+  @keyframes puddle{from{transform:scale(0)}to{transform:scale(1)}}
+
+  /* Själva fallet */
+  .brownie{
+    position:absolute;left:50%;bottom:40%;width:72%;
+    transform-origin:50% 100%;
+    animation:fall 1.7s ease-in both;
+  }
+  @keyframes fall{
+    0%  {transform:translate(-50%,-120vh) rotate(-320deg)}
+    100%{transform:translate(-50%,0) rotate(0deg)}
+  }
+  /* Platt-smäll + geléaktig vickning när den landat */
+  .brownie svg{
+    width:100%;display:block;overflow:visible;transform-origin:50% 100%;
+    animation:splat 1.1s 1.7s ease-out both, jelly 2.8s 2.8s ease-in-out infinite;
+  }
+  @keyframes splat{
+    0%  {transform:scale(1,1)}
+    20% {transform:scale(1.28,.68)}
+    50% {transform:scale(.92,1.12)}
+    75% {transform:scale(1.04,.97)}
+    100%{transform:scale(1,1)}
+  }
+  @keyframes jelly{
+    0%,100%{transform:scale(1,1)}
+    50%    {transform:scale(1.02,.98)}
+  }
+
+  /* Smulor */
+  .crumb{
+    position:absolute;left:50%;bottom:45%;background:#3a1a0b;border-radius:40%;
+    opacity:0;animation:crumb .9s ease-out both;
+  }
+  @keyframes crumb{
+    0%  {opacity:0;transform:translate(0,0)}
+    5%  {opacity:1}
+    60% {opacity:1;transform:translate(var(--x),var(--y))}
+    100%{opacity:0;transform:translate(var(--x),calc(var(--y) + 120px))}
+  }
+
+  button{
+    position:absolute;bottom:2vh;left:50%;transform:translateX(-50%);
+    padding:.6em 1.2em;border:0;border-radius:999px;cursor:pointer;
+    background:#3a1a0b;color:#fff;font:inherit;font-size:1rem;
+    opacity:0;animation:fadeUp .6s 3.2s ease-out both;
+  }
+  button:hover{background:#5a2c14}
+</style>
+</head>
+<body>
+
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+
+<h1>Kladdig brownie – serveras nu!</h1>
+
+<div class="plate-wrap">
+  <!-- Tallrik -->
+  <svg viewBox="0 0 620 140" aria-label="Tallrik">
+    <ellipse cx="310" cy="116" rx="270" ry="20" fill="rgba(0,0,0,.18)"/>
+    <ellipse cx="310" cy="72" rx="300" ry="60" fill="#f4f4f4" stroke="#d6d9de" stroke-width="4"/>
+    <ellipse cx="310" cy="76" rx="232" ry="40" fill="#e3e6eb"/>
+    <ellipse cx="310" cy="72" rx="226" ry="36" fill="#fafafa"/>
+    <!-- chokladsås-pöl -->
+    <ellipse class="puddle" cx="310" cy="80" rx="170" ry="22" fill="#2a1209"/>
+  </svg>
+
+  <!-- Korvformad brownie -->
+  <div class="brownie">
+    <svg viewBox="0 0 400 170" aria-label="Brownie">
+      <defs>
+        <linearGradient id="brown" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#7a4222"/>
+          <stop offset=".5" stop-color="#4a2511"/>
+          <stop offset="1" stop-color="#2a1209"/>
+        </linearGradient>
+        <!-- Gör kanterna skakiga och kladdiga -->
+        <filter id="messy" x="-10%" y="-10%" width="120%" height="130%">
+          <feTurbulence type="fractalNoise" baseFrequency=".04" numOctaves="2" seed="7" result="n"/>
+          <feDisplacementMap in="SourceGraphic" in2="n" scale="12"/>
+        </filter>
+      </defs>
+
+      <g filter="url(#messy)">
+        <!-- Själva korven -->
+        <path d="M40 85 C30 40 70 20 120 28 C170 14 230 22 280 26 C340 18 375 45 366 88
+                 C372 130 335 152 285 146 C235 158 170 150 120 148 C65 156 25 128 40 85 Z"
+              fill="url(#brown)"/>
+
+        <!-- Chokladbitar -->
+        <g fill="#1a0803">
+          <rect x="95"  y="55"  width="26" height="18" rx="5" transform="rotate(-12 108 64)"/>
+          <rect x="170" y="45"  width="30" height="20" rx="5" transform="rotate(8 185 55)"/>
+          <rect x="250" y="62"  width="26" height="18" rx="5" transform="rotate(-6 263 71)"/>
+          <rect x="140" y="95"  width="28" height="18" rx="5" transform="rotate(10 154 104)"/>
+          <rect x="300" y="95"  width="24" height="16" rx="5" transform="rotate(-14 312 103)"/>
+          <rect x="70"  y="100" width="22" height="15" rx="5" transform="rotate(6 81 107)"/>
+        </g>
+
+        <!-- Sprickor i ytan -->
+        <g stroke="#2a1209" stroke-width="3" stroke-linecap="round" fill="none" opacity=".8">
+          <path d="M120 40 l18 14 l-6 12"/>
+          <path d="M215 36 l-10 18 l14 10"/>
+          <path d="M300 44 l-14 14 l10 12"/>
+        </g>
+
+        <!-- Kladdig chokladsås på toppen -->
+        <path d="M80 50 C120 35 200 45 260 38 C310 34 335 50 330 62
+                 C320 72 310 66 300 80 C290 92 280 70 262 78 C240 88 230 66 205 76
+                 C180 86 170 64 145 74 C120 84 110 62 90 70 C70 74 70 58 80 50 Z"
+              fill="#1a0803"/>
+
+        <!-- Droppar -->
+        <g fill="#2a1209">
+          <path d="M90 140 q-8 30 4 30 q12 0 6 -30z"/>
+          <path d="M175 148 q-6 20 3 20 q9 0 4 -20z"/>
+          <path d="M265 142 q-8 28 4 28 q12 0 6 -28z"/>
+          <path d="M335 128 q-6 22 3 22 q9 0 4 -22z"/>
+        </g>
+      </g>
+
+      <!-- Glansstrimma (utan skak-filter så den blir len) -->
+      <path d="M85 42 C140 28 230 32 300 36" stroke="#fff" stroke-opacity=".22"
+            stroke-width="8" stroke-linecap="round" fill="none"/>
+    </svg>
+  </div>
+</div>
+
+<button onclick="location.reload()">Släpp en till! 🍫</button>
+
+<script>
+  // Smulor som flyger iväg när brownien landar
+  const wrap = document.querySelector('.plate-wrap');
+  for (let i = 0; i < 16; i++) {
+    const c = document.createElement('span');
+    c.className = 'crumb';
+    const a = Math.random() * Math.PI;
+    const d = 80 + Math.random() * 200;
+    c.style.setProperty('--x', Math.cos(a) * d * (Math.random() < .5 ? -1 : 1) + 'px');
+    c.style.setProperty('--y', -Math.sin(a) * d * .7 + 'px');
+    c.style.animationDelay = (1.7 + Math.random() * .1) + 's';
+    c.style.width = c.style.height = (5 + Math.random() * 8) + 'px';
+    wrap.appendChild(c);
+  }
+</script>
+</body>
+</html>
+EOF
